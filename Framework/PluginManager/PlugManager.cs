@@ -18,19 +18,18 @@ namespace PluginManager
         #endregion
 
         #region props
-        public string PluginsDirectory { get; set; }
 
         #endregion
 
         #region methdos
-        public void LoadPlugins()
+        public void LoadPlugins(string plugDirectory)
         {
-            if (string.IsNullOrEmpty(PluginsDirectory))
+            if (string.IsNullOrEmpty(plugDirectory))
             {
-                throw new Exception("PluginsDirectory is null/empty.");
+                throw new ArgumentNullException("plugDirectory");
             }
             plugins.Clear();
-            foreach (string filePath in Directory.GetFiles(PluginsDirectory))
+            foreach (string filePath in Directory.GetFiles(plugDirectory))
             {
                 FileInfo fileInfo = new FileInfo(filePath);
                 if (fileInfo.Extension.Equals(".dll"))
@@ -38,6 +37,17 @@ namespace PluginManager
                     AddPlugin(filePath);
                 }
             }
+        }
+
+        public void UnloadPlugins()
+        {
+            foreach (var item in plugins)
+            {
+                PluginInfo pi = item.Value;
+                pi.Instance.Dispose();
+                pi.Instance = null;
+            }
+            plugins.Clear();
         }
 
         void AddPlugin(string filePath)
