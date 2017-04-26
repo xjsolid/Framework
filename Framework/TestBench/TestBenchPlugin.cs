@@ -8,12 +8,11 @@ using MvvmFoundation.Wpf;
 
 namespace TestBench
 {
-    class TestBenchPlugin : IFormPlugin
+    public class TestBenchPlugin : IFormPlugin
     {
         #region ctor
-        public TestBenchPlugin(Messenger messenger)
+        public TestBenchPlugin()
         {
-            this.messenger = messenger;
         }
         #endregion
 
@@ -21,6 +20,8 @@ namespace TestBench
         static Form testBenchForm = new TestBench();
         Messenger messenger;
         #endregion
+
+        #region props
         public string Name
         {
             get
@@ -53,12 +54,23 @@ namespace TestBench
 
         public void Initialize()
         {
+            testBenchForm.FormClosing += TestBenchForm_FormClosing;
+        }
 
+        private void TestBenchForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            messenger.NotifyColleagues(Messages.MainUIClose);
+        }
+
+        public void Show()
+        {
+            Form.Show();
         }
 
         public void Dispose()
         {
             testBenchForm.Dispose();
         }
+        #endregion
     }
 }

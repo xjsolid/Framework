@@ -1,4 +1,5 @@
 ﻿using Framework.PluginInterface;
+using MvvmFoundation.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,14 +12,22 @@ namespace PluginManager
     public class PlugManager
     {
         #region ctor
+        public PlugManager(Messenger messenger)
+        {
+            this.messenger = messenger;
+        }
         #endregion
 
         #region members
         Dictionary<string, PluginInfo> plugins = new Dictionary<string, PluginInfo>();
+        Messenger messenger;
         #endregion
 
         #region props
-
+        public Dictionary<string, PluginInfo> Plugins
+        {
+            get { return plugins; }
+        }
         #endregion
 
         #region methdos
@@ -65,14 +74,24 @@ namespace PluginManager
                             PluginInfo pi = new PluginInfo();
                             pi.AssemblyPath = filePath;
                             pi.Instance = (IPlugin)Activator.CreateInstance(assembly.GetType(type.ToString()));
+                            pi.Instance.Messenger = messenger;
                             pi.Instance.Initialize();
                             plugins.Add(pi.Instance.Name, pi);
                         }
                     }
-                    
                 }
             }
 
+        }
+
+        public void Show(string plugin)
+        {
+            PluginInfo pi = plugins[plugin];
+            if (pi!= null)
+            {
+                IFormPlugin fpi = pi.Instance as IFormPlugin;
+                fpi.Show();
+            }
         }
         #endregion
     }

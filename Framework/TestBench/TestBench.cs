@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Framework.PluginInterface;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,5 +16,11 @@ namespace TestBench
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Caution!");
+        }
+
     }
 }
