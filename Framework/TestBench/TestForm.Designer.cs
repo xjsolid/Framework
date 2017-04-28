@@ -1,6 +1,6 @@
 ﻿namespace TestBench
 {
-    partial class TestBench
+    partial class TestForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
+            this.button_LogTest = new System.Windows.Forms.Button();
+            this.button_Exception = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -37,19 +39,43 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
+            this.button1.Text = "MessageBox";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // TestBench
+            // button_LogTest
+            // 
+            this.button_LogTest.Location = new System.Drawing.Point(105, 12);
+            this.button_LogTest.Name = "button_LogTest";
+            this.button_LogTest.Size = new System.Drawing.Size(75, 23);
+            this.button_LogTest.TabIndex = 1;
+            this.button_LogTest.Text = "LogTest";
+            this.button_LogTest.UseVisualStyleBackColor = true;
+            this.button_LogTest.Click += new System.EventHandler(this.button_LogTest_Click);
+            // 
+            // button_Exception
+            // 
+            this.button_Exception.Location = new System.Drawing.Point(186, 12);
+            this.button_Exception.Name = "button_Exception";
+            this.button_Exception.Size = new System.Drawing.Size(99, 23);
+            this.button_Exception.TabIndex = 2;
+            this.button_Exception.Text = "Exception";
+            this.button_Exception.UseVisualStyleBackColor = true;
+            this.button_Exception.Click += new System.EventHandler(this.button_Exception_Click);
+            // 
+            // TestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(525, 465);
+            this.Controls.Add(this.button_Exception);
+            this.Controls.Add(this.button_LogTest);
             this.Controls.Add(this.button1);
-            this.Name = "TestBench";
+            this.Name = "TestForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestBench_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TestForm_FormClosed);
             this.ResumeLayout(false);
 
         }
@@ -57,6 +83,8 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_LogTest;
+        private System.Windows.Forms.Button button_Exception;
     }
 }
 

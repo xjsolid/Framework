@@ -37,7 +37,6 @@ namespace PluginManager
             {
                 throw new ArgumentNullException("plugDirectory");
             }
-            plugins.Clear();
             foreach (string filePath in Directory.GetFiles(plugDirectory))
             {
                 FileInfo fileInfo = new FileInfo(filePath);
@@ -76,7 +75,7 @@ namespace PluginManager
                             pi.Instance = (IPlugin)Activator.CreateInstance(assembly.GetType(type.ToString()));
                             pi.Instance.Messenger = messenger;
                             pi.Instance.Initialize();
-                            plugins.Add(pi.Instance.Name, pi);
+                            plugins.Add(type.Name, pi);
                         }
                     }
                 }

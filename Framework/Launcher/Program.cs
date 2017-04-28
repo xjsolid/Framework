@@ -7,6 +7,8 @@ using System.Configuration;
 using System.Windows.Forms;
 using MvvmFoundation.Wpf;
 using Framework.PluginInterface;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Launcher
 {
@@ -16,18 +18,42 @@ namespace Launcher
         static PlugManager plugManager = new PlugManager(messenger);
         static void Main(string[] args)
         {
-            messenger.Register(Messages.MainUIClose, OnMainUiClose);
+            //设置应用程序处理异常方式：ThreadException处理
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             Console.WriteLine("Starting...");
             plugManager.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
+
+            string pluginFolder = ConfigurationManager.AppSettings["PluginFolder"];
+            pluginFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pluginFolder);
+            if (!Directory.Exists(pluginFolder))
+            {
+                Directory.CreateDirectory(pluginFolder);
+            }
+            plugManager.LoadPlugins(pluginFolder);
+
             foreach (string key in plugManager.Plugins.Keys)
             {
                 Console.WriteLine("Loaded Plugin: {0}", key);
             }
 
-
+            // show MainUI
             string startupPlugin = ConfigurationManager.AppSettings["StartupPlugin"];
-            plugManager.Show(startupPlugin);
+            try
+            {
+                plugManager.Show(startupPlugin);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception throw:");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.ReadKey();
+            }
+            messenger.Register(Messages.MainUIClose, OnMainUiClose);
+
+            WindowHide(Console.Title);
 
             Application.EnableVisualStyles();
             Application.Run();
@@ -41,5 +67,54 @@ namespace Launcher
             Application.Exit();
         }
 
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            string str = GetExceptionMsg(e.ExceptionObject as Exception, e.ToString());
+            MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //LogManager.WriteLog(str);
+        }
+
+        /// <summary>
+        /// 生成自定义异常消息
+        /// </summary>
+        /// <param name="ex">异常对象</param>
+        /// <param name="backStr">备用异常消息：当ex为null时有效</param>
+        /// <returns>异常字符串文本</returns>
+        static string GetExceptionMsg(Exception ex, string backStr)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("****************************异常文本****************************");
+            sb.AppendLine("【出现时间】：" + DateTime.Now.ToString());
+            if (ex != null)
+            {                
+                sb.AppendLine("【异常类型】：" + ex.GetType().Name);
+                sb.AppendLine("【异常信息】：" + ex.Message);
+                sb.AppendLine("【堆栈调用】：" + ex.StackTrace);
+            }
+            else
+            {
+                sb.AppendLine("【未处理异常】：" + backStr);
+            }
+            sb.AppendLine("***************************************************************");
+            return sb.ToString();
+        }
+
+        #region 隐藏窗口  
+        [DllImport("user32.dll", EntryPoint = "ShowWindow", SetLastError = true)]
+        private static extern bool ShowWindow(IntPtr hWnd, uint nCmdShow);
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+
+        public static void WindowHide(string consoleTitle)
+        {
+            IntPtr a = FindWindow("ConsoleWindowClass", consoleTitle);
+            if (a != IntPtr.Zero)
+                ShowWindow(a, 0);//隐藏窗口  
+            else
+                throw new Exception("can't hide console window");
+        }
+        #endregion
     }
 }
