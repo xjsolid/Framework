@@ -70,7 +70,12 @@ namespace PluginManager
                         Type typeInterface = type.GetInterface("Framework.PluginInterface.IPlugin", true);
                         if (typeInterface != null)
                         {
-                            PluginInfo pi = new PluginInfo();
+                            PluginInfo pi = FindPlugin(type.Name);
+                            if (pi != null)
+                            {
+                                return;
+                            }
+                            pi = new PluginInfo();
                             pi.AssemblyPath = filePath;
                             pi.Instance = (IPlugin)Activator.CreateInstance(assembly.GetType(type.ToString()));
                             pi.Instance.Messenger = messenger;
@@ -83,9 +88,21 @@ namespace PluginManager
 
         }
 
+        PluginInfo FindPlugin(string plugin)
+        {
+            foreach (string item in plugins.Keys)
+            {
+                if (item.Equals(plugin))
+                {
+                    return plugins[plugin];
+                }
+            }
+            return null;
+        }
+
         public void Show(string plugin)
         {
-            PluginInfo pi = plugins[plugin];
+            PluginInfo pi = FindPlugin(plugin);
             if (pi!= null)
             {
                 IFormPlugin fpi = pi.Instance as IFormPlugin;

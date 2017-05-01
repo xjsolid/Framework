@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginManager", "PluginMana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{F3C53E8E-4D84-4919-A49F-8B2A240B4A37}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqMgr", "SeqMgr\SeqMgr.csproj", "{02865503-0BDC-4E18-944A-BBA524680AB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F3C53E8E-4D84-4919-A49F-8B2A240B4A37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3C53E8E-4D84-4919-A49F-8B2A240B4A37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3C53E8E-4D84-4919-A49F-8B2A240B4A37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02865503-0BDC-4E18-944A-BBA524680AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02865503-0BDC-4E18-944A-BBA524680AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02865503-0BDC-4E18-944A-BBA524680AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02865503-0BDC-4E18-944A-BBA524680AB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

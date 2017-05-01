@@ -20,6 +20,8 @@ namespace Launcher
         {
             //设置应用程序处理异常方式：ThreadException处理
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            //处理UI线程异常   
+            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             Console.WriteLine("Starting...");
@@ -53,18 +55,30 @@ namespace Launcher
             }
             messenger.Register(Messages.MainUIClose, OnMainUiClose);
 
-            WindowHide(Console.Title);
+            //WindowHide(Console.Title);
 
             Application.EnableVisualStyles();
             Application.Run();
-
             //             plugManager.UnloadPlugins();
         }
 
         static void OnMainUiClose()
         {
-            plugManager.UnloadPlugins();
-            Application.Exit();
+            WindowShow(Console.Title);
+            Console.WriteLine("Unloading plugins");
+            try
+            {
+                plugManager.UnloadPlugins();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception throw:");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.ReadKey();
+            }
+            Console.WriteLine("Application exit");
+            Environment.Exit(0);
         }
 
 
@@ -72,7 +86,29 @@ namespace Launcher
         {
             string str = GetExceptionMsg(e.ExceptionObject as Exception, e.ToString());
             MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //LogManager.WriteLog(str);
+            WriteLog(str);
+        }
+
+        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            string str = GetExceptionMsg(e.Exception as Exception, e.ToString());
+            MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            WriteLog(str);
+        }
+
+        static void WriteLog(string str)
+        {
+            if (!Directory.Exists("Log-Exception"))
+            {
+                Directory.CreateDirectory("Log-Exception");
+            }
+
+            using (StreamWriter sw = new StreamWriter(@"Log-Exception\Exception.txt", true))
+            {
+                sw.WriteLine(str);
+                sw.WriteLine("---------------------------------------------------------");
+                sw.Close();
+            }
         }
 
         /// <summary>
@@ -112,6 +148,15 @@ namespace Launcher
             IntPtr a = FindWindow("ConsoleWindowClass", consoleTitle);
             if (a != IntPtr.Zero)
                 ShowWindow(a, 0);//隐藏窗口  
+            else
+                throw new Exception("can't hide console window");
+        }
+
+        public static void WindowShow(string consoleTitle)
+        {
+            IntPtr a = FindWindow("ConsoleWindowClass", consoleTitle);
+            if (a != IntPtr.Zero)
+                ShowWindow(a, 1);//隐藏窗口  
             else
                 throw new Exception("can't hide console window");
         }
