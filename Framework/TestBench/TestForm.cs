@@ -17,6 +17,7 @@ namespace TestBench
         public TestForm()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
         }
 
         #region members
@@ -58,6 +59,12 @@ namespace TestBench
             string logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log-TestBench");
             string logPath = string.Format("{0}\\{1}", logDir, DateTime.Now.ToString("yyyyMMdd-hhmmss"));
             logContext = new LogContext("Initializing TestBench", logPath, LogLevel.Info, true);
+            Messenger.Register<int>("Count", OnCount);
+        }
+
+        void OnCount(int i)
+        {
+            this.textBox_Counter.Text = i.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)

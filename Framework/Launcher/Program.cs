@@ -2,20 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PluginManager;
 using System.Configuration;
 using System.Windows.Forms;
-using MvvmFoundation.Wpf;
-using Framework.PluginInterface;
 using System.IO;
 using System.Runtime.InteropServices;
+using Host;
 
 namespace Launcher
 {
     class Program
     {
-        static Messenger messenger = new Messenger();
-        static PlugManager plugManager = new PlugManager(messenger);
         static void Main(string[] args)
         {
             //设置应用程序处理异常方式：ThreadException处理
@@ -25,7 +21,8 @@ namespace Launcher
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
             Console.WriteLine("Starting...");
-            plugManager.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
+
+            HostApp.PlugMgr.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
 
             string pluginFolder = ConfigurationManager.AppSettings["PluginFolder"];
             pluginFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pluginFolder);
@@ -33,66 +30,39 @@ namespace Launcher
             {
                 Directory.CreateDirectory(pluginFolder);
             }
-            plugManager.LoadPlugins(pluginFolder);
+            HostApp.PlugMgr.LoadPlugins(pluginFolder);
 
-            foreach (string key in plugManager.Plugins.Keys)
+            foreach (string key in HostApp.PlugMgr.Plugins.Keys)
             {
                 Console.WriteLine("Loaded Plugin: {0}", key);
             }
 
-            // show MainUI
-            string startupPlugin = ConfigurationManager.AppSettings["StartupPlugin"];
-            try
-            {
-                plugManager.Show(startupPlugin);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception throw:");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-                Console.ReadKey();
-            }
-            messenger.Register(Messages.MainUIClose, OnMainUiClose);
+            // register exit event
+            HostApp.Exited += HostApp_Exited;
 
-            //WindowHide(Console.Title);
-
-            Application.EnableVisualStyles();
-            Application.Run();
-            //             plugManager.UnloadPlugins();
+            //Host startup
+            HostApp.StartUp();
+            
         }
 
-        static void OnMainUiClose()
+        private static void HostApp_Exited(object sender, EventArgs e)
         {
-            WindowShow(Console.Title);
-            Console.WriteLine("Unloading plugins");
-            try
-            {
-                plugManager.UnloadPlugins();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception throw:");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-                Console.ReadKey();
-            }
-            Console.WriteLine("Application exit");
             Environment.Exit(0);
         }
 
-
+        #region deal with exception
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             string str = GetExceptionMsg(e.ExceptionObject as Exception, e.ToString());
-            MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Exception ex = e.ExceptionObject as Exception;
+            MessageBox.Show(ex.Message, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             WriteLog(str);
         }
 
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             string str = GetExceptionMsg(e.Exception as Exception, e.ToString());
-            MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(e.Exception.Message, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             WriteLog(str);
         }
 
@@ -110,6 +80,7 @@ namespace Launcher
                 sw.Close();
             }
         }
+        #endregion
 
         /// <summary>
         /// 生成自定义异常消息
@@ -136,30 +107,5 @@ namespace Launcher
             return sb.ToString();
         }
 
-        #region 隐藏窗口  
-        [DllImport("user32.dll", EntryPoint = "ShowWindow", SetLastError = true)]
-        private static extern bool ShowWindow(IntPtr hWnd, uint nCmdShow);
-        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-
-        public static void WindowHide(string consoleTitle)
-        {
-            IntPtr a = FindWindow("ConsoleWindowClass", consoleTitle);
-            if (a != IntPtr.Zero)
-                ShowWindow(a, 0);//隐藏窗口  
-            else
-                throw new Exception("can't hide console window");
-        }
-
-        public static void WindowShow(string consoleTitle)
-        {
-            IntPtr a = FindWindow("ConsoleWindowClass", consoleTitle);
-            if (a != IntPtr.Zero)
-                ShowWindow(a, 1);//隐藏窗口  
-            else
-                throw new Exception("can't hide console window");
-        }
-        #endregion
     }
 }

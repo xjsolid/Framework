@@ -31,6 +31,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button_LogTest = new System.Windows.Forms.Button();
             this.button_Exception = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox_Counter = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -63,11 +65,29 @@
             this.button_Exception.UseVisualStyleBackColor = true;
             this.button_Exception.Click += new System.EventHandler(this.button_Exception_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 59);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 12);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Counter Test:";
+            // 
+            // textBox_Counter
+            // 
+            this.textBox_Counter.Location = new System.Drawing.Point(101, 50);
+            this.textBox_Counter.Name = "textBox_Counter";
+            this.textBox_Counter.Size = new System.Drawing.Size(100, 21);
+            this.textBox_Counter.TabIndex = 4;
+            // 
             // TestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(525, 465);
+            this.Controls.Add(this.textBox_Counter);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button_Exception);
             this.Controls.Add(this.button_LogTest);
             this.Controls.Add(this.button1);
@@ -77,6 +97,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestBench_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TestForm_FormClosed);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -85,6 +106,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button_LogTest;
         private System.Windows.Forms.Button button_Exception;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox_Counter;
     }
 }
 
