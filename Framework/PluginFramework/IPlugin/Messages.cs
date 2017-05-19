@@ -13,7 +13,7 @@ namespace Framework.PluginInterface
 
     }
 
-    public class Messages
+    public class GolbalMessages
     {
         #region mainUI messages
         public static string MainAppExit

@@ -19,7 +19,6 @@ namespace Host
         #endregion
 
         #region members
-        static Messenger messenger = new Messenger();
         static PlugManager plugMgr = new PlugManager();
         #endregion
 
@@ -47,7 +46,7 @@ namespace Host
                 throw new Exception(string.Format("Not find startup Plugin:{0}", startupPlugin));
             }
             pi.Instance.Start();
-            messenger.Register(Messages.MainAppExit, OnMainAppExit);
+            Raven.ExcepectingMessage(GolbalMessages.MainAppExit, OnMainAppExit);
 
             //WindowHide(Console.Title);
 

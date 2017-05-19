@@ -80,12 +80,14 @@ namespace Launcher
 
         static void WriteLog(string str)
         {
-            if (!Directory.Exists("Log-Exception"))
+            string logFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log-Exception");
+            if (!Directory.Exists(logFolder))
             {
-                Directory.CreateDirectory("Log-Exception");
+                Directory.CreateDirectory(logFolder);
             }
 
-            using (StreamWriter sw = new StreamWriter(@"Log-Exception\Exception.txt", true))
+            string logFilePath = Path.Combine(logFolder, "Exception.txt");
+            using (StreamWriter sw = new StreamWriter(logFilePath, true))
             {
                 sw.WriteLine(str);
                 sw.WriteLine("---------------------------------------------------------");

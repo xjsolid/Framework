@@ -3,17 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
 namespace TestBenchPlugin
 {
-    public class TestBench : IPlugin
+    public class TestBenchPlugin : IPlugin
     {
-        public TestBench()
-        {
+        #region members
+        TestBench tb;
+        #endregion
 
-        }
-
+        #region IPlugin implement
         public string Name
         {
             get
@@ -30,17 +29,28 @@ namespace TestBenchPlugin
             }
         }
 
-        public void Dispose()
-        {
-        }
-
         public void Initialize()
         {
+            tb = new TestBench();
+            tb.FormClosing += Tb_FormClosing;
+        }
+
+        private void Tb_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            Raven.BroadcastMessage(GolbalMessages.MainAppExit);
         }
 
         public void Start()
         {
-            MessageBox.Show("Started!");
+            tb.Show();
         }
+
+        public void Dispose()
+        {
+            tb.Close();
+        }
+        
+
+        #endregion
     }
 }
