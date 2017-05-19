@@ -8,41 +8,20 @@ namespace Framework.PluginInterface
     enum MessageEnum
     {
         #region MainUI messages
-        MainUIClose,
+        MainAppExit,
         #endregion
 
-        #region Log messages
-        LogCreate,
-        Log,
-        LogDispose,
-        #endregion
     }
 
     public class Messages
     {
         #region mainUI messages
-        public static string MainUIClose
+        public static string MainAppExit
         {
-            get { return MessageEnum.MainUIClose.ToString(); }
+            get { return MessageEnum.MainAppExit.ToString(); }
         }
         #endregion
 
-        #region log messages
-        public static string LogCreate
-        {
-            get { return MessageEnum.LogCreate.ToString(); }
-        }
-
-        public static string Log
-        {
-            get { return MessageEnum.Log.ToString(); }
-        }
-
-        public static string LogDispose
-        {
-            get { return MessageEnum.LogDispose.ToString(); }
-        }
-        #endregion
     }
 
     public class LogContext

@@ -42,8 +42,13 @@ namespace Host
 
             var appConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location);
             string startupPlugin = appConfig.AppSettings.Settings["StartupPlugin"].Value;//ConfigurationManager.AppSettings["StartupPlugin"];
-            plugMgr.Show(startupPlugin);
-            messenger.Register(Messages.MainUIClose, OnMainUIClose);
+            PluginInfo pi = plugMgr[startupPlugin];
+            if (pi == null)
+            {
+                throw new Exception(string.Format("Not find startup Plugin:{0}", startupPlugin));
+            }
+            pi.Instance.Initialize();
+            messenger.Register(Messages.MainAppExit, OnMainAppExit);
 
             //WindowHide(Console.Title);
 
@@ -51,11 +56,10 @@ namespace Host
 
         }
 
-        static void OnMainUIClose()
+        static void OnMainAppExit()
         {
             //TODO: clean up when exit
             plugMgr.UnloadPlugins();
-
             OnExit();
         }
         #endregion

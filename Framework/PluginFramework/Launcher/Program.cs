@@ -41,7 +41,14 @@ namespace Launcher
             HostApp.Exited += HostApp_Exited;
 
             //Host startup
-            HostApp.StartUp();
+            try
+            {
+                HostApp.StartUp();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             
         }
 

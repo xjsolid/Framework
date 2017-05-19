@@ -28,6 +28,11 @@ namespace Host
         {
             get { return plugins; }
         }
+
+        public PluginInfo this[string pluginName]
+        {
+            get { return FindPlugin(pluginName); }
+        }
         #endregion
 
         #region methdos
@@ -106,25 +111,7 @@ namespace Host
             return null;
         }
 
-        public void Show(string plugin)
-        {
-            if (string.IsNullOrEmpty(plugin))
-            {
-                throw new ArgumentNullException("plugin");
-            }
-            PluginInfo pi = FindPlugin(plugin);
-            if (pi!= null)
-            {
-                IFormPlugin fpi = pi.Instance as IFormPlugin;
-                Console.WriteLine("Found Startup Plugin: {0}", pi.Instance.Name);
-                Console.WriteLine("Starting App");
-                fpi.Show();
-            }
-            else
-            {
-                throw new Exception(string.Format("Not find startup plugin: {0}", plugin));
-            }
-        }
+
         #endregion
     }
 }
