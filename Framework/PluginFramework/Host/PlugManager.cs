@@ -1,5 +1,4 @@
 ﻿using Framework.PluginInterface;
-using MvvmFoundation.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,15 +11,13 @@ namespace Host
     public class PlugManager
     {
         #region ctor
-        public PlugManager(Messenger messenger)
+        public PlugManager()
         {
-            this.messenger = messenger;
         }
         #endregion
 
         #region members
         Dictionary<string, PluginInfo> plugins = new Dictionary<string, PluginInfo>();
-        Messenger messenger;
         #endregion
 
         #region props
@@ -80,14 +77,16 @@ namespace Host
                             PluginInfo pi = FindPlugin(type.Name);
                             if (pi != null)
                             {
-                                return;
+                                Console.WriteLine(string.Format("Plugin: {0} instance already exists", type.Name));
+                                continue;
                             }
-                            pi = new PluginInfo();
+                            pi = new PluginInfo(type.Name);
                             pi.AssemblyPath = filePath;
                             Console.WriteLine("Create Instance of Plugin: {0}", type.Name);
-                            pi.Instance = (IPlugin)Activator.CreateInstance(assembly.GetType(type.ToString()));
+                            object instance = Activator.CreateInstance(assembly.GetType(type.ToString()));
+                            //object instance = assembly.CreateInstance(type.FullName);
+                            pi.Instance = (IPlugin)instance;
                             Console.WriteLine("Success.");
-                            pi.Instance.Messenger = messenger;
                             Console.WriteLine("Initializing Plugin: {0}", type.Name);
                             pi.Instance.Initialize();
                             Console.WriteLine("Success.");

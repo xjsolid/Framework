@@ -22,7 +22,6 @@ namespace Launcher
 
             Console.WriteLine("Starting...");
 
-            HostApp.PlugMgr.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
 
             string pluginFolder = ConfigurationManager.AppSettings["PluginFolder"];
             pluginFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pluginFolder);
@@ -30,7 +29,13 @@ namespace Launcher
             {
                 Directory.CreateDirectory(pluginFolder);
             }
+
+            HostApp.PlugMgr.LoadPlugins(AppDomain.CurrentDomain.BaseDirectory);
             HostApp.PlugMgr.LoadPlugins(pluginFolder);
+            foreach (var item in Directory.EnumerateDirectories(pluginFolder))
+            {
+                HostApp.PlugMgr.LoadPlugins(item);
+            }
 
             foreach (string key in HostApp.PlugMgr.Plugins.Keys)
             {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MvvmFoundation.Wpf;
 using System.Configuration;
 using System.Reflection;
 using Framework.PluginInterface;
@@ -21,7 +20,7 @@ namespace Host
 
         #region members
         static Messenger messenger = new Messenger();
-        static PlugManager plugMgr = new PlugManager(messenger);
+        static PlugManager plugMgr = new PlugManager();
         #endregion
 
         #region props
@@ -47,7 +46,7 @@ namespace Host
             {
                 throw new Exception(string.Format("Not find startup Plugin:{0}", startupPlugin));
             }
-            pi.Instance.Initialize();
+            pi.Instance.Start();
             messenger.Register(Messages.MainAppExit, OnMainAppExit);
 
             //WindowHide(Console.Title);
